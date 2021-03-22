@@ -58,7 +58,7 @@ git clone --depth=1 https://github.com/KFERMercer/luci-app-dockerman
 git clone --depth=1 https://github.com/lisaac/luci-lib-docker
 
 # Add luci-app-gowebdav
-# git clone --depth=1 https://github.com/project-openwrt/openwrt-gowebdav
+#git clone --depth=1 https://github.com/project-openwrt/openwrt-gowebdav
 svn co https://github.com/immortalwrt/immortalwrt/trunk/package/ctcgfw/gowebdav
 svn co https://github.com/immortalwrt/immortalwrt/trunk/package/ctcgfw/luci-app-gowebdav
 
@@ -69,7 +69,10 @@ rm -rf ../lean/luci-theme-argon
 
 # Use immortalwrt's luci-app-netdata
 rm -rf ../lean/luci-app-netdata
-svn co https://github.com/immortalwrt/immortalwrt/trunk/package/ntlf9t/luci-app-netdata
+svn co https://github.com/281677160/openwrt-package/trunk/luci-app-netdata
+
+# Add luci-app-wireguard
+svn co https://github.com/openwrt/luci/trunk/applications/luci-app-wireguard
 
 # Add tmate
 git clone --depth=1 https://github.com/project-openwrt/openwrt-tmate
@@ -97,14 +100,6 @@ git clone --depth=1 https://github.com/NateLol/luci-app-oled
 svn co https://github.com/project-openwrt/openwrt/branches/master/package/ctcgfw/rtl8812au-ac
 svn co https://github.com/project-openwrt/openwrt/branches/master/package/ctcgfw/rtl8821cu
 popd
-
-# # Add adguardhome
-# pushd feeds/packages/net
-# svn co https://github.com/openwrt/packages/trunk/net/adguardhome
-# sed -i '/\t)/a\\t$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome' adguardhome/Makefile
-# sed -i '/init/d' adguardhome/Makefile
-# svn co https://github.com/immortalwrt/packages/trunk/net/adguardhome
-# popd
 
 # Add netdata
 pushd feeds/packages/admin
@@ -150,3 +145,19 @@ popd
 
 # Change default shell to zsh
 sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
+
+#Apply Patches
+git am $GITHUB_WORKSPACE/patches/*.patch
+
+#DDNS
+rm -rf ./feeds/packages/net/ddns-scripts
+rm -rf ./feeds/luci/applications/luci-app-ddns
+svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/ddns-scripts_aliyun package/lean/ddns-scripts_aliyun
+svn co https://github.com/coolsnowwolf/lede/trunk/package/lean/ddns-scripts_dnspod package/lean/ddns-scripts_dnspod
+svn co https://github.com/openwrt/packages/branches/openwrt-18.06/net/ddns-scripts feeds/packages/net/ddns-scripts
+svn co https://github.com/openwrt/luci/branches/openwrt-18.06/applications/luci-app-ddns feeds/luci/applications/luci-app-ddns
+
+#腾讯DDNS
+svn co https://github.com/QiuSimons/OpenWrt_luci-app/trunk/others/luci-app-tencentddns package/lean/luci-app-tencentddns
+#阿里DDNS
+svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-aliddns package/new/luci-app-aliddns
